@@ -1,0 +1,31 @@
+apiVersion: skaffold/v1alpha2
+kind: Config
+build:
+  tagPolicy:
+    envTemplate:
+      template: "{{.DOCKER_REGISTRY}}/suntehnik/rest-access-gateway:{{.VERSION}}"
+  artifacts:
+  - imageName: changeme
+    workspace: .
+    docker: {}
+  local: {}
+deploy:
+  kubectl:
+    manifests:
+profiles:
+- name: dev
+  build:
+    tagPolicy:
+      envTemplate:
+        template: "{{.DOCKER_REGISTRY}}/suntehnik/rest-access-gateway:{{.DIGEST_HEX}}"
+    artifacts:
+    - docker: {}
+    local: {}
+  deploy:
+    helm:
+      releases:
+      - name: rest-access-gateway
+        chartPath: charts/rest-access-gateway
+        setValueTemplates:
+          image.repository: "{{.DOCKER_REGISTRY}}/suntehnik/rest-access-gateway"
+          image.tag: "{{.DIGEST_HEX}}"
