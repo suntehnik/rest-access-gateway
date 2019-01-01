@@ -54,10 +54,10 @@ class RestAccessGatewayTest {
     @Test
     fun postNewObject() {
         assertNotNull("Mock MVC set up", mockMvc)
-        val postFieldConfiguration = TicTacToeProto.cmdPostFieldConfiguration.newBuilder()
+        val postFieldConfiguration = TicTacToeProto.cmdNewCell.newBuilder()
                 .setX(1)
                 .setY(1)
-                .setKind(TicTacToeProto.cmdPostFieldConfiguration.Kind.X)
+                .setKind(TicTacToeProto.Kind.X)
                 .build()
         val fieldConfigStr = JsonFormat.printer().print(postFieldConfiguration)
         mockMvc?.let {

@@ -1,5 +1,6 @@
 package com.tictactoe.restaccessgateway.handler
 
+import com.google.protobuf.util.JsonFormat
 import com.tictactoe.proto.TicTacToeProto
 import com.tictactoe.restaccessgateway.handler.RabbitQueue.Companion.QUEUE_NAME
 import io.reactivex.subjects.SingleSubject
@@ -15,6 +16,7 @@ import java.util.logging.Logger
 
 @Component
 class RequestHandler {
+
     @Autowired
     private lateinit var rabbitQueue: RabbitQueue
 
@@ -23,7 +25,7 @@ class RequestHandler {
     fun handleCommand(cmdNewCell: TicTacToeProto.cmdNewCell): SingleSubject<TicTacToeProto.respNewCell> {
         val singleSubject = SingleSubject.create<TicTacToeProto.respNewCell>()
         requestsMap[cmdNewCell.clientRequestId] = singleSubject
-        rabbitQueue.sender().send(cmdNewCell.toByteArray())
+        rabbitQueue.sender().send(JsonFormat.printer().print(cmdNewCell))
         return singleSubject
     }
 }

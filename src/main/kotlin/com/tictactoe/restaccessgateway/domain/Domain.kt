@@ -13,7 +13,7 @@ class CellStore(@Id val id: String, @Embedded val cell: Cell)
 class Cell(val kind: CellKind, val x: Long, val y: Long)
 
 class FieldConfiguration {
-    val cells: List<Cell> = mutableListOf()
+    val cells: MutableList<Cell> = mutableListOf()
 }
 
 class TicTacToeError(val message: String, val code: Int)
@@ -30,10 +30,10 @@ enum class CellKind(val kind: Int) {
             }
         }
 
-        fun valueOf(value: TicTacToeProto.cmdPostFieldConfiguration.Kind): CellKind {
+        fun valueOf(value: TicTacToeProto.Kind): CellKind {
             return when (value) {
-                TicTacToeProto.cmdPostFieldConfiguration.Kind.O -> O
-                TicTacToeProto.cmdPostFieldConfiguration.Kind.X -> X
+                TicTacToeProto.Kind.O -> O
+                TicTacToeProto.Kind.X -> X
                 else -> throw IllegalArgumentException("Unsupported cell kind")
             }
         }

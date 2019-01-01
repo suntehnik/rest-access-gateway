@@ -91,5 +91,6 @@ class CommandObjectFactory {
         for (cell in cellsList) {
             fieldConfiguration.cells.add( Cell(CellKind.valueOf(cell.kind), cell.x, cell.y))
         }
+        return fieldConfiguration
     }
 }
