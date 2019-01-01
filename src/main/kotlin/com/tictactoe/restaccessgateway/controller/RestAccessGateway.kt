@@ -9,10 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter
 import org.springframework.stereotype.Component
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod.*
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.concurrent.TimeUnit
 
 @RestController
 class RestAccessGateway {
@@ -33,10 +34,15 @@ class RestAccessGateway {
     }
 
     @RequestMapping(value = ["/field"], method = [POST])
-    fun postNewObjectObservable(@RequestParam("x") x: Long,
-                                @RequestParam("y") y: Long,
-                                @RequestParam("kind") kind: String): Single<TicTacToeResponse> {
-        return requestHandler.handleCommand(commandObjectFactory.createObject(x, y, kind))
+    fun postNewObjectObservable(@RequestBody newCellCommand: TicTacToeProto.cmdNewCell): Single<TicTacToeResponse> {
+        val cmd = newCellCommand.toBuilder().setClientRequestId(objectIdGenerator.createLong()).build()
+        return requestHandler.handleCommand(cmd)
+                .timeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
+                .onErrorReturn {
+                    TicTacToeProto.respNewCell.newBuilder()
+                            .setStatus(TicTacToeProto.Status.fail)
+                            .build()
+                }
                 .map { s ->
                     when (s.status) {
                         TicTacToeProto.Status.success -> {
@@ -60,9 +66,7 @@ class RestAccessGateway {
     }
 
     @Bean
-    fun protobufHttpMessageConverter(): ProtobufHttpMessageConverter {
-        return ProtobufHttpMessageConverter()
-    }
+    fun protobufHttpMessageConverter() = ProtobufHttpMessageConverter()
 
     @RequestMapping(value = ["/field"], method = [DELETE, PUT, PATCH])
     fun invalidRequestInvocation(): TicTacToeResponse {
@@ -89,7 +93,7 @@ class CommandObjectFactory {
     fun createFieldConfiguration(cellsList: List<TicTacToeProto.docFieldCell>): FieldConfiguration {
         val fieldConfiguration = FieldConfiguration()
         for (cell in cellsList) {
-            fieldConfiguration.cells.add( Cell(CellKind.valueOf(cell.kind), cell.x, cell.y))
+            fieldConfiguration.cells.add(Cell(CellKind.valueOf(cell.kind), cell.x, cell.y))
         }
         return fieldConfiguration
     }

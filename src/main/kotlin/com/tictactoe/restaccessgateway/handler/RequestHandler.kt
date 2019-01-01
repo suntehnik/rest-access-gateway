@@ -20,12 +20,16 @@ class RequestHandler {
     @Autowired
     private lateinit var rabbitQueue: RabbitQueue
 
+    @Autowired
+    private lateinit var sender: Sender
+
     private var requestsMap: HashMap<Long, SingleSubject<TicTacToeProto.respNewCell>> = HashMap()
 
     fun handleCommand(cmdNewCell: TicTacToeProto.cmdNewCell): SingleSubject<TicTacToeProto.respNewCell> {
         val singleSubject = SingleSubject.create<TicTacToeProto.respNewCell>()
         requestsMap[cmdNewCell.clientRequestId] = singleSubject
-        rabbitQueue.sender().send(JsonFormat.printer().print(cmdNewCell))
+        val message = JsonFormat.printer().print(cmdNewCell)
+        sender.send(message)
         return singleSubject
     }
 }
@@ -39,15 +43,12 @@ class RabbitQueue {
     @Bean
     fun receiver() = RabbitReceiver()
 
-    @Bean
-    fun sender() = Sender()
-
-
     companion object {
         const val QUEUE_NAME = "spring-queue"
     }
 }
 
+@Component
 class Sender {
 
     @Autowired

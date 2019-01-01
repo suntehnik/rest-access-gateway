@@ -12,7 +12,7 @@ class ObjectIdGenerator {
         return String.format("%s-%d", T::class.java.simpleName, millis)
     }
 
-    final inline fun createLong() : Long {
-        return System.currentTimeMillis();
+    final fun createLong() : Long {
+        return System.currentTimeMillis()
     }
 }
