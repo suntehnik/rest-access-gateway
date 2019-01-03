@@ -14,7 +14,7 @@ Feature: As a user I can get field configuration
 
   Scenario: I want to post some cell
     Given url 'http://localhost:8080/field'
-    And request { x: "1", 'y': "1", kind: "X" }
+    And request { x: "1", y: "1", kind: "X" }
     When method post
     Then status 200
     And match response == {id: '#present', code: 200, fieldConfiguration: '#present', error: '#null'}
