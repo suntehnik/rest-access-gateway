@@ -1,14 +1,10 @@
+@file:Suppress("unused")
+
 package com.tictactoe.restaccessgateway.domain
 
 import com.tictactoe.proto.TicTacToeProto
-import javax.persistence.Embedded
-import javax.persistence.Entity
-import javax.persistence.Id
 
 class TicTacToeResponse(val id: String, val code: Int, val error: TicTacToeError?, val fieldConfiguration: FieldConfiguration?)
-
-@Entity
-class CellStore(@Id val id: String, @Embedded val cell: Cell)
 
 class Cell(val kind: CellKind, val x: Long, val y: Long)
 

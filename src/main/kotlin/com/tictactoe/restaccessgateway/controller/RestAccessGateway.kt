@@ -46,7 +46,8 @@ class RestAccessGateway {
                 .map { s ->
                     when (s.status) {
                         TicTacToeProto.Status.success -> {
-                            TicTacToeResponse(s.clientRequestId.toString(), 200, null, commandObjectFactory.createFieldConfiguration(s.cellsList))
+                            TicTacToeResponse(s.clientRequestId.toString(), 200, null,
+                                    commandObjectFactory.createFieldConfiguration(s.cellsList))
                         }
                         TicTacToeProto.Status.fail -> {
                             val error = TicTacToeError("Request timed out", 408)
@@ -81,14 +82,6 @@ class RestAccessGateway {
 
 @Component
 class CommandObjectFactory {
-
-    fun createObject(x: Long, y: Long, kind: String): TicTacToeProto.cmdNewCell {
-        return TicTacToeProto.cmdNewCell.newBuilder()
-                .setKind(TicTacToeProto.Kind.valueOf(kind))
-                .setX(x)
-                .setY(y)
-                .build()
-    }
 
     fun createFieldConfiguration(cellsList: List<TicTacToeProto.docFieldCell>): FieldConfiguration {
         val fieldConfiguration = FieldConfiguration()
