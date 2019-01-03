@@ -41,6 +41,7 @@ class RestAccessGateway {
                 .onErrorReturn {
                     TicTacToeProto.respNewCell.newBuilder()
                             .setStatus(TicTacToeProto.Status.fail)
+                            .setMessage(it.message)
                             .build()
                 }
                 .map { s ->
@@ -50,7 +51,7 @@ class RestAccessGateway {
                                     commandObjectFactory.createFieldConfiguration(s.cellsList))
                         }
                         TicTacToeProto.Status.fail -> {
-                            val error = TicTacToeError("Request timed out", 408)
+                            val error = TicTacToeError(s.message, 408)
                             TicTacToeResponse("", error.code, error, null)
                         }
                         TicTacToeProto.Status.UNRECOGNIZED -> {
