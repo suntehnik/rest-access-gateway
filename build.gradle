@@ -41,7 +41,7 @@ repositories {
 
 
 dependencies {
-    implementation files('../protobuf-spec/build/libs/protobuf-spec.jar')
+    implementation files('../tic-tac-toe-protobuf-spec/build/libs/protobuf-spec.jar')
 
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     implementation('org.springframework.boot:spring-boot-starter-web')

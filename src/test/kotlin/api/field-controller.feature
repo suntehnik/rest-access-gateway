@@ -17,6 +17,8 @@ Feature: As a user I can get field configuration
     And request { x: "1", 'y': "1", kind: "X" }
     When method post
     Then status 200
+    And match response == {id: '#present', code: 200, fieldConfiguration: '#present', error: '#null'}
+
 
 #  Scenario: I want to delete some cell
 #    Given url 'http://localhost:8080/field'

@@ -37,7 +37,7 @@ class RestAccessGateway {
     fun postNewObjectObservable(@RequestBody newCellCommand: TicTacToeProto.cmdNewCell): Single<TicTacToeResponse> {
         val cmd = newCellCommand.toBuilder().setClientRequestId(objectIdGenerator.createLong()).build()
         return requestHandler.handleCommand(cmd)
-                .timeout(REQUEST_TIMEOUT, TimeUnit.MILLISECONDS)
+                .timeout(REQUEST_TIMEOUT, TimeUnit.SECONDS)
                 .onErrorReturn {
                     TicTacToeProto.respNewCell.newBuilder()
                             .setStatus(TicTacToeProto.Status.fail)
@@ -46,7 +46,7 @@ class RestAccessGateway {
                 .map { s ->
                     when (s.status) {
                         TicTacToeProto.Status.success -> {
-                            TicTacToeResponse("", 200, null, commandObjectFactory.createFieldConfiguration(s.cellsList))
+                            TicTacToeResponse(s.clientRequestId.toString(), 200, null, commandObjectFactory.createFieldConfiguration(s.cellsList))
                         }
                         TicTacToeProto.Status.fail -> {
                             val error = TicTacToeError("Request timed out", 408)
